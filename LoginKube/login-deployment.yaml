@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-api
+  template:
+    metadata:
+      labels:
+        app: spring-api
+    spec:
+      containers:
+        - name: spring-api
+          image: khalil73/login-k8s-env:latest
+          ports:
+            - containerPort: 8089
+          env:
+            - name: MYSQL_HOST
+              value: mysqldb
+            - name: MYSQL_USER
+              value: root
+            - name: MYSQL_PASSWORD
+              value: root
+            - name: MYSQL_PORT
+              value: "3306"
+            - name: MYSQL_DATABASE
+              value: loginkube
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-api-service
+spec:
+  selector:
+    app: spring-api
+  ports:
+    - protocol: TCP
+      port: 9090
+      targetPort: 8089
